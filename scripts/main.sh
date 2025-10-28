@@ -1,5 +1,5 @@
 export WANDB_MODE=offline
-export WANDB_DIR=/home/hezhuangzhuang-p/vr-zero/wandb
+export WANDB_DIR=/data/hezhuangzhuang-p/vr-zero/wandb
 
 export STORAGE_PATH="/data/hezhuangzhuang-p/vr-zero/storage"
 export HUGGINGFACENAME="bruno888"
@@ -15,8 +15,10 @@ Base_model=/data/hezhuangzhuang-p/llm/Qwen2.5-VL-3B-Instruct
 Model_abbr=Qwen2.5-VL-3B-Instruct
 echo "Model_abbr: $Model_abbr"
 # Initialize first iteration with base model
-bash scripts/questioner_train.sh  $Base_model $Base_model ${Model_abbr}_questioner_v1
+# bash scripts/questioner_train.sh  $Base_model $Base_model ${Model_abbr}_questioner_v1
+bash scripts/solver_train.sh $Base_model /data/hezhuangzhuang-p/vr-zero/saves/3b_grpo_vrzero/global_step_40/actor/huggingface ${Model_abbr}_solver_v1
 # bash scripts/solver_train.sh $Base_model ${STORAGE_PATH}/models/${Model_abbr}_questioner_v1/global_step_5/actor/huggingface ${Model_abbr}_solver_v1
+
 
 
 # for i in {2..5}; do

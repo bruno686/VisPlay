@@ -29,7 +29,8 @@ from transformers import PreTrainedTokenizer, ProcessorMixin
 
 from ..models.transformers.qwen2_vl import get_rope_index
 from . import torch_functional as VF
-
+import base64
+from io import BytesIO
 
 def collate_fn(features: List[Dict[str, Any]]) -> Dict[str, Any]:
     tensors = defaultdict(list)
@@ -53,6 +54,12 @@ def collate_fn(features: List[Dict[str, Any]]) -> Dict[str, Any]:
 
     return {**tensors, **non_tensors}
 
+def b64_to_image(b64_str):
+    try:
+        img_bytes = base64.b64decode(b64_str)
+        return Image.open(BytesIO(img_bytes)).convert("RGB")
+    except Exception:
+        return None
 
 class ImageProcessMixin:
     max_pixels: int
@@ -63,7 +70,7 @@ class ImageProcessMixin:
             image = Image.open(BytesIO(image["bytes"]))
         elif isinstance(image, bytes):
             image = Image.open(BytesIO(image))
-
+        image = b64_to_image(image) if isinstance(image, str) else image
         if (image.width * image.height) > self.max_pixels:
             resize_factor = math.sqrt(self.max_pixels / (image.width * image.height))
             width, height = int(image.width * resize_factor), int(image.height * resize_factor)
@@ -129,7 +136,7 @@ class RLHFDataset(Dataset, ImageProcessMixin):
         if format_prompt:
             with open(format_prompt, encoding="utf-8") as f:
                 self.format_prompt = f.read()
-
+        #这个地方没进去['problem', 'answer', 'score', 'image', 'question_type']，因为 image key是'images'
         if self.image_key and self.image_key in self.dataset.column_names:
             self.dataset = self.dataset.map(
                 self._prefix_image_token,
@@ -168,45 +175,58 @@ class RLHFDataset(Dataset, ImageProcessMixin):
             format_prompt = Template(self.format_prompt.strip())
             prompt_str = format_prompt.render(content=prompt_str)
         if self.image_key in example:
-            # https://huggingface.co/docs/transformers/en/tasks/image_text_to_text
-            # if not prompt_str.lstrip().startswith("<image>"):
-            #     prompt_str = "<image> " + prompt_str
             content_list = []
             for i, content in enumerate(prompt_str.split("<image>")):
                 if i != 0:
                     content_list.append({"type": "image"})
+                    return [{"role": "user", "content": content_list}]
                 if content:
-                    content_list.append({"type": "text", "text": """
-                    You are an intelligent Question Generator. Your task is to create a question based on the given image.  
+                    if "solver_format" in self.format_prompt:
+                        # content_list.append({"type": "text", "text": 'Please reasoning step by step based on the question and image, and put your final answer within' + r"\boxed{}." + 'question: ' + content})
+                        content_list.append({
+                            "type": "text",
+                            "text": (
+                                "Please reason step by step carefully based on the question: " + content + " and the image. "
+                                "After completing your reasoning, you MUST output the final, clean, and concise answer "
+                                "strictly inside " + r"\\boxed{ }." +
+                                "The final answer MUST appear inside \\boxed{}, and nowhere else. "
+                                "If there is no boxed answer, your response is considered incorrect. "
+                            )
+                        })
 
-                    **Requirements (must follow exactly):**  
+                    else:
+                        content_list.append({"type": "text", "text": """
+                        You are an intelligent Question G
+                        enerator. Your task is to create a question based on the given image.  
 
-                    1. Analyze the image carefully and understand all details.  
-                    2. Generate **exactly one question** that is directly related to the image.  
-                    3. Choose the question type from **only one** of the following:  
-                    - `multiple choice` (Yes/No or four options labeled A, B, C, D; only one correct answer)  
-                    - `numerical` (requires a specific numeric answer)  
-                    - `regression` (requires predicting a continuous value, such as a measurement, quantity, or coordinate)  
-                    4. The question must require analysis or reasoning, not just description.  
-                    5. Provide the correct answer. Include units if applicable.  
-                    6. **Output must be strictly in this format, with nothing else:**
-                    7. Question type must be **only one** of: `multiple choice`, `numerical`, `regression`.  
+                        **Requirements (must follow exactly):**  
 
-                    The following THREE blocks:                     
-                    <type>X</type>
-                    <question>Y</question>
-                    <answer>Z</answer>
+                        1. Analyze the image carefully and understand all details.  
+                        2. Generate **exactly one question** that is directly related to the image.  
+                        3. Choose the question type from **only one** of the following:  
+                        - `multiple choice` (Yes/No or four options labeled A, B, C, D; only one correct answer)  
+                        - `numerical` (requires a specific numeric answer)  
+                        - `regression` (requires predicting a continuous value, such as a measurement, quantity, or coordinate)  
+                        4. The question must require analysis or reasoning, not just description.  
+                        5. Provide the correct answer. Include units if applicable.  
+                        6. **Output must be strictly in this format, with nothing else:**
+                        7. Question type must be **only one** of: `multiple choice`, `numerical`, `regression`.  
 
-                    **Strict rules:**  
-                    - Do **not** use any other labels, punctuation, or formatting.  
-                    - Do **not** add commentary, explanations, or extra text.  
-                    - `X` must be exactly one of: `multiple choice`, `numerical`, or `regression`.  
-                    - Always use the exact three-line structure above. 
-                    - Do NOT include any units; provide only the numeric value or option. 
-                    **Example of correct output:**   
-                    <type>numerical</type>
-                    <question>How many clubs are there in Florida?</question>
-                    <answer>5.7M</answer>  """})
+                        The following THREE blocks:                     
+                        <type>X</type>
+                        <question>Y</question>
+                        <answer>Z</answer>
+
+                        **Strict rules:**  
+                        - Do **not** use any other labels, punctuation, or formatting.  
+                        - Do **not** add commentary, explanations, or extra text.  
+                        - `X` must be exactly one of: `multiple choice`, `numerical`, or `regression`.  
+                        - Always use the exact three-line structure above. 
+                        - Do NOT include any units; provide only the numeric value or option. 
+                        **Example of correct output:**   
+                        <type>numerical</type>
+                        <question>How many clubs are there in Florida?</question>
+                        <answer>5.7M</answer>  """})
             return [{"role": "user", "content": content_list}]
         else:
             return [{"role": "user", "content": prompt_str}]
@@ -226,6 +246,7 @@ class RLHFDataset(Dataset, ImageProcessMixin):
         example["dataset_index"] = int(example["dataset_index"])
         example["question"] = example[self.prompt_key] 
         messages = self._build_messages(example)
+
         if self.image_key in example:
             prompt = self.processor.apply_chat_template(messages, add_generation_prompt=True, tokenize=False)
             raw_images = example.pop(self.image_key)
@@ -246,7 +267,7 @@ class RLHFDataset(Dataset, ImageProcessMixin):
             model_inputs = self.tokenizer([prompt], add_special_tokens=False, return_tensors="pt")
             input_ids = model_inputs.pop("input_ids")[0]
             attention_mask = model_inputs.pop("attention_mask")[0]
-
+        
         if self.processor is not None and self.processor.image_processor.__class__.__name__ == "Qwen2VLImageProcessor":
             # qwen2vl mrope
             position_ids = get_rope_index(
@@ -267,7 +288,19 @@ class RLHFDataset(Dataset, ImageProcessMixin):
             left_pad=True,
             truncation=self.truncation,
         )
+
+        # For raw_prompt_ids, we need the tokenized prompt with placeholders (not expanded image tokens)
+        # vLLM will handle the image token expansion itself based on multi_modal_data
         raw_prompt_ids = self.tokenizer.encode(prompt, add_special_tokens=False)
+        
+        # DEBUG: Check prompt and raw_prompt_ids length
+        # if self.image_key in example and index < 3:  # Only print first 3 samples
+        #     print(f"[DEBUG] Sample {index}:")
+        #     print(f"[DEBUG] Prompt string (first 200 chars): {prompt[:200]}...")
+        #     print(f"[DEBUG] Prompt string (last 200 chars): ...{prompt[-200:]}")
+        #     print(f"[DEBUG] raw_prompt_ids length: {len(raw_prompt_ids)}")
+        #     print(f"[DEBUG] input_ids length (after processor): {len(input_ids)}")
+        
         if len(raw_prompt_ids) > self.max_prompt_length:
             if self.truncation == "left":
                 raw_prompt_ids = raw_prompt_ids[-self.max_prompt_length :]

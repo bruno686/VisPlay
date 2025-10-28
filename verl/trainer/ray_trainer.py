@@ -596,7 +596,7 @@ class RayPPOTrainer:
 
                 metrics, timing_raw = {}, {}
                 batch: DataProto = DataProto.from_single_dict(batch_dict)
-
+                
                 # pop those keys for generation
                 if "multi_modal_data" in batch.non_tensor_batch.keys():
                     gen_batch = batch.pop(

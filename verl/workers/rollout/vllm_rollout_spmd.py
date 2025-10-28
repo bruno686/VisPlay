@@ -142,7 +142,6 @@ class vLLMRollout(BaseRollout):
             vllm_inputs = [
                 {"prompt_token_ids": list(raw_prompt_ids)} for raw_prompt_ids in non_tensor_batch.pop("raw_prompt_ids")
             ]
-
         # users can customize different sampling_params at different run
         with self.update_sampling_params(**prompts.meta_info):
             completions: List[RequestOutput] = self.inference_engine.generate(

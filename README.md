@@ -1,3 +1,9 @@
+10/28： solver train一定要注意message和 image 占位符使用，整体逻辑很简单，Input —(pack)—> prompt —>model—>output。build message 是整个除了算法外的代码最核心。在这里有 types image，就不需要再有额外 image 占位符
+
+
+
+
+
 ## Vision-SR1: Self-Rewarding Vision-Language Model via Reasoning Decomposition
 
 [[📖 Paper](---)]  

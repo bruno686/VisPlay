@@ -214,7 +214,6 @@ def compute_score(predicts: List[str], ground_truths: List[str], questions: List
             else:
                 item["image"] = None 
         results.append(item)
-    # breakpoint()
     # results在运行下一行前是带有image的[{'question': 'How many countries a... suitcase?', 'answer': '10', 'types': 'numerical', 'image': array([<PIL.Image.Im...pe=object)},
     final_results = generate_results(results)
     # 运行之后results的image就没了？？[{'question': 'How many countries a... suitcase?', 'answer': '10', 'types': 'numerical',

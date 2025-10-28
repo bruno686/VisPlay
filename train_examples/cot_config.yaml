@@ -52,7 +52,7 @@ worker:
 
   rollout:
     max_num_batched_tokens: 15000
-    max_model_len: 8192
+    max_model_len: 16384
     n: 8
     temperature: 1.0
     top_p: 0.99

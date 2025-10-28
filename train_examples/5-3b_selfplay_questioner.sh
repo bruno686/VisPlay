@@ -5,7 +5,7 @@ set -x
 export PYTHONUNBUFFERED=1
 
 export WANDB_MODE=offline
-export WANDB_DIR=/home/hezhuangzhuang-p/vr-zero/wandb
+export WANDB_DIR=/data/hezhuangzhuang-p/vr-zero/wandb
 
 MODEL_PATH=/data/hezhuangzhuang-p/llm/Qwen2.5-VL-3B-Instruct  # replace it with your local file path
 
