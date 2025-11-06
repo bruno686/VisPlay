@@ -29,7 +29,13 @@ from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
 from sklearn.cluster import AgglomerativeClustering
 import numpy as np
 STORAGE_PATH = os.getenv("STORAGE_PATH")
+if STORAGE_PATH is None:
+    STORAGE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ["NO_PROXY"] = "0.0.0.0,127.0.0.1"
+
+# Ensure temp_results directory exists
+TEMP_RESULTS_DIR = os.path.join(STORAGE_PATH, "temp_results")
+os.makedirs(TEMP_RESULTS_DIR, exist_ok=True)
 
 def encode_image_to_base64(image):
     """

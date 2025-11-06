@@ -75,11 +75,11 @@ worker:
 
   reward:
     reward_type: batch
-    reward_function: ./validation_examples/reward_function/validation.py:compute_score
+    reward_function: ./train_examples/reward_function/cot_val_solver.py:compute_score
 
   val_reward:
     reward_type: batch
-    reward_function: ./validation_examples/reward_function/validation.py:compute_score
+    reward_function: ./train_examples/reward_function/cot_val_solver.py:compute_score
 
 trainer:
   total_epochs: 1
