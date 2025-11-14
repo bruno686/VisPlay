@@ -70,7 +70,7 @@ def judge_answer_with_llm(predicted_answer: str, ground_truth_answer: str, quest
         )
     
     result = response.choices[0].message.content.strip().lower()
-    print('result:', result)
+
     if result == '1' or result == '正确' or result == 'yes' or result == 'true' or result=="correct":
         return True
     else:
@@ -162,49 +162,59 @@ def main():
     # 定义数据集映射
     # 格式：{预测文件名: (预测文件路径, 真实答案文件路径, file_name_filter)}
     datasets = {
-        # 'mm-vet': (
-        #     f'/data/hezhuangzhuang-p/vr-zero/Evaluation/Raw-Outputs/{args.model}/mm-vet.jsonl',
-        #     '/data/hezhuangzhuang-p/datasets/mm-vet/test.parquet',
-        #     None
+        # 'MLLM_test/mmmu-pro': (
+        #     f'/data/hezhuangzhuang-p/vr-zero/Evaluation/Raw-Outputs/{args.model}/MLLM_test.jsonl',
+        #     '/data/hezhuangzhuang-p/datasets/MLLM_test/test.parquet',
+        #     'mmmu-pro'
         # ),
+        'MMMU': (
+            f'/data/hezhuangzhuang-p/vr-zero/Evaluation/Raw-Outputs/{args.model}/MMMU.jsonl',
+            '/data/hezhuangzhuang-p/datasets/MMMU/data/test-00000-of-00001.parquet',
+            None
+        ),
+        'MLLM_test/mm-vet': (
+            f'/data/hezhuangzhuang-p/vr-zero/Evaluation/Raw-Outputs/{args.model}/MLLM_test.jsonl',
+            '/data/hezhuangzhuang-p/datasets/MLLM_test/test.parquet',
+            'mm-vet'
+        ),
+        'MLLM_test/realWorldQA': (
+            f'/data/hezhuangzhuang-p/vr-zero/Evaluation/Raw-Outputs/{args.model}/MLLM_test.jsonl',
+            '/data/hezhuangzhuang-p/datasets/MLLM_test/test.parquet',
+            'realWorldQA'
+        ),
+        'visnumbench': (
+            f'/data/hezhuangzhuang-p/vr-zero/Evaluation/Raw-Outputs/{args.model}/visnumbench.jsonl',
+            '/data/hezhuangzhuang-p/datasets/visnumbench/data/test-00000-of-00001.parquet',
+            None
+        ),
+        'MLLM_test/mathverse': (
+            f'/data/hezhuangzhuang-p/vr-zero/Evaluation/Raw-Outputs/{args.model}/MLLM_test.jsonl',
+            '/data/hezhuangzhuang-p/datasets/MLLM_test/test.parquet',
+            'mathverse'
+        ),
+        'MLLM_test/mathvision': (
+            f'/data/hezhuangzhuang-p/vr-zero/Evaluation/Raw-Outputs/{args.model}/MLLM_test.jsonl',
+            '/data/hezhuangzhuang-p/datasets/MLLM_test/test.parquet',
+            'mathvision'
+        ),
+        'hallusionbench': (
+            f'/data/hezhuangzhuang-p/vr-zero/Evaluation/Raw-Outputs/{args.model}/hallusionbench.jsonl',
+            '/data/hezhuangzhuang-p/datasets/hallusionbench/data/test-00000-of-00001.parquet',
+            None
+        ),
         # 'MLLM_test/clevr_count_70k': (
         #     f'/data/hezhuangzhuang-p/vr-zero/Evaluation/Raw-Outputs/{args.model}/MLLM_test.jsonl',
         #     '/data/hezhuangzhuang-p/datasets/MLLM_test/test.parquet',
         #     'clevr_count_70k'
-        # ),
-        # 'MLLM_test/mathverse': (
-        #     f'/data/hezhuangzhuang-p/vr-zero/Evaluation/Raw-Outputs/{args.model}/MLLM_test.jsonl',
-        #     '/data/hezhuangzhuang-p/datasets/MLLM_test/test.parquet',
-        #     'mathverse'
-        # ),
-        # 'MLLM_test/mathvision': (
-        #     f'/data/hezhuangzhuang-p/vr-zero/Evaluation/Raw-Outputs/{args.model}/MLLM_test.jsonl',
-        #     '/data/hezhuangzhuang-p/datasets/MLLM_test/test.parquet',
-        #     'mathvision'
         # ),
         # 'MLLM_test/mathvista': (
         #     f'/data/hezhuangzhuang-p/vr-zero/Evaluation/Raw-Outputs/{args.model}/MLLM_test.jsonl',
         #     '/data/hezhuangzhuang-p/datasets/MLLM_test/test.parquet',
         #     'mathvista'
         # ),
-        # 'MLLM_test/mm-vet': (
-        #     f'/data/hezhuangzhuang-p/vr-zero/Evaluation/Raw-Outputs/{args.model}/MLLM_test.jsonl',
-        #     '/data/hezhuangzhuang-p/datasets/MLLM_test/test.parquet',
-        #     'mm-vet'
-        # ),
-        # 'MLLM_test/mmmu-pro': (
-        #     f'/data/hezhuangzhuang-p/vr-zero/Evaluation/Raw-Outputs/{args.model}/MLLM_test.jsonl',
-        #     '/data/hezhuangzhuang-p/datasets/MLLM_test/test.parquet',
-        #     'mmmu-pro'
-        # ),
-        'MLLM_test/realWorldQA': (
-            f'/data/hezhuangzhuang-p/vr-zero/Evaluation/Raw-Outputs/{args.model}/MLLM_test.jsonl',
-            '/data/hezhuangzhuang-p/datasets/MLLM_test/test.parquet',
-            'realWorldQA'
-        ),
-        # 'visnumbench': (
-        #     f'/data/hezhuangzhuang-p/vr-zero/Evaluation/Raw-Outputs/{args.model}/visnumbench.jsonl',
-        #     '/data/hezhuangzhuang-p/datasets/visnumbench/data/test-00000-of-00001.parquet',
+        # 'mm-vet': (
+        #     f'/data/hezhuangzhuang-p/vr-zero/Evaluation/Raw-Outputs/{args.model}/mm-vet.jsonl',
+        #     '/data/hezhuangzhuang-p/datasets/mm-vet/test.parquet',
         #     None
         # ),
         # 'mmmu_pro_10options': (
@@ -217,16 +227,6 @@ def main():
         #     '/data/hezhuangzhuang-p/datasets/mmmu-pro-vision/data/test-00000-of-00001.parquet',
         #     None
         # ),
-        # 'hallusionbench': (
-        #     f'/data/hezhuangzhuang-p/vr-zero/Evaluation/Raw-Outputs/{args.model}/hallusionbench.jsonl',
-        #     '/data/hezhuangzhuang-p/datasets/hallusionbench/data/test-00000-of-00001.parquet',
-        #     None
-        # ),
-        # 'MMMU': (
-        #     f'/data/hezhuangzhuang-p/vr-zero/Evaluation/Raw-Outputs/{args.model}/MMMU.jsonl',
-        #     '/data/hezhuangzhuang-p/datasets/MMMU/data/test-00000-of-00001.parquet',
-        #     None
-        # ),
     }
     
     # 统计所有数据集的结果
@@ -235,7 +235,7 @@ def main():
     total_samples = 0
     
     # 提前创建结果文件
-    output_file = f'/data/hezhuangzhuang-p/vr-zero/Evaluation/{args.model}_results.txt'
+    output_file = f'/data/hezhuangzhuang-p/vr-zero/Evaluation/{args.model}_results2.txt'
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write("")
     

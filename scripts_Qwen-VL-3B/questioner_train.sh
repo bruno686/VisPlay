@@ -27,18 +27,17 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 -m verl.trainer.main \
     worker.actor.model.model_path=$questioner_model_path \
     worker.rollout.max_model_len=8192 \
     worker.rollout.n=8 \
-    trainer.max_steps=21  \
+    trainer.max_steps=20  \
     trainer.experiment_name=$save_path \
     trainer.save_checkpoint_path=${STORAGE_PATH}/models/$save_path \
-    trainer.total_epochs=100 \
+    trainer.total_epochs=10 \
     trainer.n_gpus_per_node=4 \
-    trainer.val_before_train=false \
-    trainer.val_only=false
+    trainer.val_before_train=false
 
 sleep 5
 
 echo "merging model"
-python scripts/model_merger.py --local_dir ${STORAGE_PATH}/models/$save_path/global_step_20/actor
+python scripts_Qwen-VL-3B/model_merger.py --local_dir ${STORAGE_PATH}/models/$save_path/global_step_20/actor
 
 sleep 10
 

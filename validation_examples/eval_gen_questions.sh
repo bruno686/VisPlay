@@ -19,12 +19,19 @@ export STORAGE_PATH="/data/hezhuangzhuang-p/vr-zero/storage"
 # SAVE_PATH=3B-VL-Qwen2.5-solver_1
 
 
+# DATASETS=(
+#   "/data/hezhuangzhuang-p/datasets/mm-vet/test.parquet"
+#   "/data/hezhuangzhuang-p/datasets/MLLM_test/test.parquet"
+#   "/data/hezhuangzhuang-p/datasets/visnumbench/data/test-00000-of-00001.parquet"
+#   "/data/hezhuangzhuang-p/datasets/mmmu_pro_10options/data/test-00000-of-00001.parquet"
+#   "/data/hezhuangzhuang-p/datasets/mmmu-pro-vision/data/test-00000-of-00001.parquet"
+#   "/data/hezhuangzhuang-p/datasets/hallusionbench/data/test-00000-of-00001.parquet"
+#   "/data/hezhuangzhuang-p/datasets/MMMU/data/test-00000-of-00001.parquet"
+# )
+
 DATASETS=(
-  "/data/hezhuangzhuang-p/datasets/mm-vet/test.parquet"
   "/data/hezhuangzhuang-p/datasets/MLLM_test/test.parquet"
   "/data/hezhuangzhuang-p/datasets/visnumbench/data/test-00000-of-00001.parquet"
-  "/data/hezhuangzhuang-p/datasets/mmmu_pro_10options/data/test-00000-of-00001.parquet"
-  "/data/hezhuangzhuang-p/datasets/mmmu-pro-vision/data/test-00000-of-00001.parquet"
   "/data/hezhuangzhuang-p/datasets/hallusionbench/data/test-00000-of-00001.parquet"
   "/data/hezhuangzhuang-p/datasets/MMMU/data/test-00000-of-00001.parquet"
 )
@@ -42,13 +49,14 @@ BASE_CMD="python3 -m verl.trainer.main \
   worker.rollout.max_model_len=25600 \
   worker.rollout.n=8 \
   trainer.total_epochs=1 \
-  trainer.experiment_name=Qwen2.5-3B-eval \
+  trainer.experiment_name=${experiment_name} \
   trainer.save_checkpoint_path=./Evaluation/Raw-Outputs \
   trainer.n_gpus_per_node=8 \
   worker.actor.micro_batch_size_per_device_for_experience=1 \
   worker.actor.global_batch_size=8 \
   data.format_prompt=./train_examples/format_prompt/solver.jinja \
-  trainer.val_only=true"
+  trainer.val_only=true \
+  trainer.logger=[console]"
 
 # ------------------------------------------------------------------
 # LOOP over datasets

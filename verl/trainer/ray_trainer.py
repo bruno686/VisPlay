@@ -588,10 +588,12 @@ class RayPPOTrainer:
             if self.config.trainer.val_only:
                 return
 
+        should_stop = False
         for _ in tqdm(range(self.config.trainer.total_epochs), desc="Epoch", position=0):
             for batch_dict in tqdm(self.train_dataloader, desc="Running step", position=1):
                 self.global_step += 1
                 if self.global_step > self.training_steps:
+                    should_stop = True
                     break
 
                 metrics, timing_raw = {}, {}
@@ -887,6 +889,10 @@ class RayPPOTrainer:
                 metrics.update(compute_throughout_metrics(batch=batch, timing_raw=timing_raw, num_gpus=num_gpus))
 
                 self.logger.log(data=metrics, step=self.global_step)
+            
+            # Check if we should stop after inner loop completes
+            if should_stop:
+                break
 
         # perform validation after training
         if self.val_reward_fn is not None:
@@ -900,5 +906,6 @@ class RayPPOTrainer:
 
             print(f"Final validation metrics: {convert_dict_to_str(val_metrics)}")
 
-        if self.config.trainer.save_freq <= 0 or self.global_step % self.config.trainer.save_freq != 0:
+        # Only save if we haven't saved at this step already, and we're within training steps
+        if (self.config.trainer.save_freq <= 0 or self.global_step % self.config.trainer.save_freq != 0) and self.global_step <= self.training_steps:
             self._save_checkpoint()

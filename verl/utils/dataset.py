@@ -14,6 +14,7 @@
 
 import math
 import os
+import re
 from collections import defaultdict
 from io import BytesIO
 from typing import Any, Dict, List, Optional, Union
@@ -142,6 +143,8 @@ class RLHFDataset(Dataset, ImageProcessMixin):
                 self._prefix_image_token,
                 desc="Postpond <image> to prompts"
             )
+            # Filter out examples with multiple images for MMMU
+            self.dataset = self.dataset.filter(self._filter_multiple_images, desc="Filtering multiple images")
 
         if self.filter_overlong_prompts:
             self.dataset = self.dataset.filter(self._filter_overlong_prompts, desc="Filtering overlong prompts")
@@ -153,6 +156,9 @@ class RLHFDataset(Dataset, ImageProcessMixin):
         img_token  = "<image>"
 
         prompt = example[prompt_key]
+
+        # First, normalize all <image N> tags to <image> (e.g., <image 1>, <image 2> -> <image>)
+        prompt = re.sub(r'<image\s+\d+>', '<image>', prompt)
 
         # Only operate if exactly one <image> tag is present
         if self.image_key in example and (prompt.count(img_token) == 1):
@@ -230,6 +236,13 @@ class RLHFDataset(Dataset, ImageProcessMixin):
             return [{"role": "user", "content": content_list}]
         else:
             return [{"role": "user", "content": prompt_str}]
+
+    def _filter_multiple_images(self, example: Dict[str, Any]) -> bool:
+        """Filter out examples with more than one <image> tag for MMMU"""
+        prompt = example[self.prompt_key]
+        img_token = "<image>"
+        # Keep only examples with 0 or 1 image tags
+        return prompt.count(img_token) <= 1
 
     def _filter_overlong_prompts(self, example: Dict[str, Any]) -> bool:
         messages = self._build_messages(example)

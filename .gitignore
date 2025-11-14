@@ -13,7 +13,7 @@ ms-python.python-2025.7.2025060501@alpine-arm64.vsix
 ./flash_attn-2.7.4.post1+cu12torch2.6cxx11abiFALSE-cp311-cp311-linux_x86_64.whl
 # C extensions
 *.so
-
+case_study_output/
 # Distribution / packaging
 .Python
 build/
