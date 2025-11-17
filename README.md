@@ -32,7 +32,7 @@ Because VLMs fuse the vision encoder with the LLM backbone only late in pretrain
 Besides vision decomposition, We constructed two datasets: **Vsion-SR1-Cold-9K** for SFT and **Vision-SR1-47K** for RL.
 
 <p align="center">
-    <img src="./assets/method.png" width="80%">
+    <img src="./assets/Visplay.png" width="80%">
 </p>
 
 
