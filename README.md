@@ -1,52 +1,15 @@
-10/28： solver train一定要注意message和 image 占位符使用，整体逻辑很简单，Input —(pack)—> prompt —>model—>output。build message 是整个除了算法外的代码最核心。在这里有 types image，就不需要再有额外 image 占位符
+## VisPlay: Self-Evolving Vision-Language Models
 
-
-
-
-
-## Vision-SR1: Self-Rewarding Vision-Language Model via Reasoning Decomposition
-
-[[📖 Paper](---)]  
-
-**Models:**  
-
-
-**Datasets:**  
-[📊 Vision-SR1-Cold-Start-9K](https://huggingface.co/datasets/LMMs-Lab-Turtle/Vision-SR1-Cold-9K)  | 
-[📊 Vision-SR1-47K](https://huggingface.co/datasets/LMMs-Lab-Turtle/Vision-SR1-47K) 
-
-
-**Training Curves:**  
-[📈 Vision-SR1](https://api.wandb.ai/links/zli12321-university-of-maryland/85ed11ft) 
-
----
-
-LLM evaluation scripts and model generation outputs with LLM judgments is coming, stay tuned!
-
-## 👀 About Vision-SR1
-
-Vision-SR1 is a self-rewarded RL training framework to decompose VLMs' language reasoning into visual perception reasoning and language reasoning. Inspired by the awesome works of e.g. Vision-R1, Visionary-R1, R1-VL, we leverage VLM's self evolving and reasoning ability to **Reward Itself**. 
-
-Because VLMs fuse the vision encoder with the LLM backbone only late in pretraining, they often rely primarily on language reasoning rather than visual perception. Standard RL training tends to **recall prior language knowledge** for accuracy gains while **neglecting vision**. External LLM-based perception rewards can help but introduce bias and heavy latency. We instead propose a self-reward framework, enabling the model to provide its own visual and reasoning feedback with **no latency**.
-
-Besides vision decomposition, We constructed two datasets: **Vsion-SR1-Cold-9K** for SFT and **Vision-SR1-47K** for RL.
+Reinforcement learning (RL) provides a principled framework for improving vision-language models (VLMs) on complex reasoning tasks. However, existing RL approaches often depend on human-annotated labels or task-specific heuristics to define verifiable rewards—both costly and limited in scalability. We introduce VisPlay, a self-evolving RL framework that enables VLMs to autonomously improve their reasoning capabilities from massive unlabeled image data. Starting from a single base VLM, VisPlay assigns the model into two interacting roles: an Image-Conditioned Questioner that formulates challenging yet answerable visual questions, and a Multimodal Reasoner that generates silver responses. These roles are jointly trained using Group Relative Policy Optimization (GRPO), which uses diversity and difficulty rewards to balance the difficulty of generated questions with the quality of silver answers. VisPlay scales efficiently across two model families. Trained on Qwen2.5-VL and MiMo-VL, VisPlay achieves consistent improvements in visual reasoning, compositional generalization, and hallucination reduction across eight benchmarks including MM-Vet and MMMU, and establishes a scalable path toward self-evolving multimodal intelligence.
 
 <p align="center">
     <img src="./assets/Visplay.png" width="80%">
 </p>
 
 
-### 🔍 Dataset
-Our training dataset is sourced from 23 sources and evenly split across three main areas-- general visual understanding, science knowledge, multimodal mathematical reasoning.
-
-<p align="center">
-    <img src="./assets/data.png" width="80%">
-</p>
-
-
 ## Requirements
 
-The code base adopted from [verl](https://github.com/volcengine/verl) and [EasyR1](https://github.com/hiyouga/EasyR1).
+The code base adopted from [R-Zero](https://github.com/Chengsong-Huang/R-Zero/tree/main) and [Vision-SR1](https://github.com/zli12321/Vision-SR1).
 
 ### Software Requirements
 
@@ -55,112 +18,63 @@ The code base adopted from [verl](https://github.com/volcengine/verl) and [EasyR
 
 ### RL Training Setup
 ```
-git clone https://github.com/zli12321/Vision-SR1.git
-cd Vision-SR1
-conda create -n Vision-SR1 python=3.11
+git clone https://github.com/bruno686/VisPlay.git
+cd VisPlay
+conda create -n VisPlay python=3.11
 bash setup.sh
+
+# Set an environment variable for your storage path in every main script.
+# This is a large directory where checkpoints and generated data will be saved.
+export STORAGE_PATH="/path/to/your/storage"
+export HUGGINGFACENAME="yourhuggingfacename"
+
+mkdir -p \
+  "$STORAGE_PATH/evaluation" \
+  "$STORAGE_PATH/models" \
+  "$STORAGE_PATH/generated_question" \
+  "$STORAGE_PATH/temp_results"
 ```
 
-### GRPO Training
+### Self-Play Training Scripts
 ```
-### Self-Reward Vision-SR1 GRPO Training
-bash ./train_examples/2-7b_selfReward_train.sh
+bash scripts_Qwen-VL-3B/main.sh
+bash scripts_Qwen-VL-7B/main.sh
+bash scripts_MIMO-VL-7B/main.sh
 
-### Vision-SR1 regular training
-bash ./train_examples/1-7b_visionR1_train.sh
 ```
-
-### Merge checkpoints
-```
-python3 scripts/model_merger.py --local_dir checkpoints/easy_r1/exp_name/global_step_1/actor
-```
-
 
 
 ### Evaluation & LLM-as-a-Judge Evaluation
-- NOTE 1: We use Gemini-2.5-flash as the Judge. Different LLM judges will result in different evaluation results. For reference, we also comput the rule-based evaluation accuracies, which is lower than LLM-as-Judges on Math datasets.
-- NOTE 2: We only use LLM-as-a-Judge for some of the datasets. For multiple choice datasets mmmu-pro-vision, mmmu-pro-10-options, visnumbench, hallusionbench, we use string matching to save time and costs.
+- We use ChatGLM-flash as the Judge. Different LLM judges will result in different evaluation results. For reference, we also comput the rule-based evaluation accuracies, which is lower than LLM-as-Judges on Math datasets.
 
-0. ##### Using Existing LLM Evaluations
+1. ##### Generate responses from trained LLM
 We provide all the historic LLM generations for a quick reference and access to the results
 ```
-python download_precomputed_evaluation_files.py
-cd Evaluation
-./get_eval_result.sh
-```
-
-1. ##### Generating Evaluation Responses for the models
-```
-bash ./validation_examples/2-seethink_format_eval.sh
+bash validation_examples/eval_gen_questions.sh
 ```
 
 2. ##### Use LLM-as-a-judge to generate result
 ```
-cd Evaluation
-python LLM_eval.py --input_dir ./Raw-Outputs/7B-Vision-SR1(The folder that contains the generated responses) --output_dir ./Raw-Outputs/LLM-Eval-out/7B-Vision-SR1(The output folder with LLM responses)
+bash Evaluation/eval.sh
 ```
-For LLM-as-a-judge, check ```Evaluation/utils/gemini_eval.py```. You can implement the generate() function that uses any LLM to evaluate.
-
-3. ##### Compute Evaluation Results
-```
-python eval.py --llm_eval_dir ./Raw-Outputs/7B-Vision-SR1(The LLM Eval output responses) --mcq_dir ./Raw-Outputs/LLM-Eval-out/7B-Vision-SR1(The MCQ Eval Responses)
-```
-
-### Reward Progression in training
-
-![image](assets/reward_progression.png)
-
-
-### Supervised Finetuning
-The supervised finetuning code is adopted from [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory) for easy setup.
-
-### Download the filtered SFT format data
-```
-python download-sft-data.py
-```
-
-#### Setup
-```
-conda create -n SFT python=3.11
-cd LLaMA-Factory-Cold-Start
-pip install -e ".[torch,metrics]" --no-build-isolation
-
-pip install --upgrade huggingface_hub
-huggingface-cli login
-```
-
-#### Training
-```
-FORCE_TORCHRUN=1 llamafactory-cli train examples/train_full/Vision-SR1-Cold-Start.yaml
-```
-
-### Troubleshoot
-If you still encounter errors after you follow th setup, simply clone the original LLaMA-Factory repo and follow their setup. Download the [dataset](https://huggingface.co/datasets/LMMs-Lab-Turtle/Vision-SR1-Cold-9K/tree/main) and place into the LLaMA-Factory [data folder](https://github.com/hiyouga/LLaMA-Factory/tree/main/data). Place the [Vision-SR1-Cold-Start.yaml](https://github.com/zli12321/Vision-SR1/blob/main/LLaMA-Factory-Cold-Start/examples/train_full/Vision-SR1-Cold-Start.yaml) file into the LLaMA-Factory [SFT training folder](https://github.com/hiyouga/LLaMA-Factory/tree/main/examples/train_full).
-
-### Hardware Requirements
-
-\* *estimated*
-
-| Method                   | Bits |    3B   |   7B   |  
-| ------------------------ | ---- |  ------ | ------ | 
-| GRPO Full Fine-Tuning    |  AMP |  4 or 8*40GB | 4 or 8*80GB | 
-
-> [!NOTE]
-> Use `worker.actor.fsdp.torch_dtype=bf16` and `worker.actor.optim.strategy=adamw_bf16` to enable bf16 training with fewer memory.
-
-
-## Custom Dataset
-
-Please refer to the example datasets to prepare your own dataset.
-
-- Text dataset: https://huggingface.co/datasets/hiyouga/math12k
-- Image-text dataset: https://huggingface.co/datasets/hiyouga/geometry3k
-- Multi-image-text dataset: https://huggingface.co/datasets/hiyouga/journeybench-multi-image-vqa
-
 
 ## Citation
 
 If you find our works helpful, please cite
+
+```bibtex
+@misc{VisPlay,
+      title={VisPlay: Self-Evolving Vision-Language Models}, 
+      author={Yicheng He, Chengsong Huang, Zongxia Li, Jiaxin Huang, Yonghui Yang},
+      year={2025},
+      eprint={251118.19652},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2508.19652}, 
+}
+```
+
+Our framework is directly based on the great work of Vision-SR1 and R-Zero. So,we recommend to also cite the sourcecode work.
 
 ```bibtex
 @misc{li2025selfrewardingvisionlanguagemodelreasoning,
@@ -172,15 +86,14 @@ If you find our works helpful, please cite
       primaryClass={cs.CV},
       url={https://arxiv.org/abs/2508.19652}, 
 }
-```
 
-We recommend to also cite the sourcecode work.
-
-```bibtex
-@misc{zheng2025easyr1,
-  title        = {EasyR1: An Efficient, Scalable, Multi-Modality RL Training Framework},
-  author       = {Yaowei Zheng, Junting Lu, Shenzhi Wang, Zhangchi Feng, Dongdong Kuang, Yuwen Xiong},
-  howpublished = {\url{https://github.com/hiyouga/EasyR1}},
-  year         = {2025}
+@article{huang2025rzeroselfevolvingreasoningllm,
+      title={R-Zero: Self-Evolving Reasoning LLM from Zero Data}, 
+      author={Chengsong Huang and Wenhao Yu and Xiaoyang Wang and Hongming Zhang and Zongxia Li and Ruosen Li and Jiaxin Huang and Haitao Mi and Dong Yu},
+      year={2025},
+      eprint={2508.05004},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2508.05004}, 
 }
 ```
