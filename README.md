@@ -1,13 +1,7 @@
-<table>
-<tr>
-<td><img src="./assets/title.png" width="40"></td>
-<td>
-
-## VisPlay: Self-Evolving Vision-Language Models
-
-</td>
-</tr>
-</table>
+<div style="display: flex; align-items: center; gap: 12px;">
+    <img src="./assets/title.png" width="60" style="display: block;">
+    <h2 style="margin: 0;">VisPlay: Self-Evolving Vision-Language Models</h2>
+</div>
 
 Reinforcement learning (RL) provides a principled framework for improving vision-language models (VLMs) on complex reasoning tasks. However, existing RL approaches often depend on human-annotated labels or task-specific heuristics to define verifiable rewards—both costly and limited in scalability. We introduce VisPlay, a self-evolving RL framework that enables VLMs to autonomously improve their reasoning capabilities from massive unlabeled image data. Starting from a single base VLM, VisPlay assigns the model into two interacting roles: an Image-Conditioned Questioner that formulates challenging yet answerable visual questions, and a Multimodal Reasoner that generates silver responses. These roles are jointly trained using Group Relative Policy Optimization (GRPO), which uses diversity and difficulty rewards to balance the difficulty of generated questions with the quality of silver answers. VisPlay scales efficiently across two model families. Trained on Qwen2.5-VL and MiMo-VL, VisPlay achieves consistent improvements in visual reasoning, compositional generalization, and hallucination reduction across eight benchmarks including MM-Vet and MMMU, and establishes a scalable path toward self-evolving multimodal intelligence.
 
