@@ -14,11 +14,6 @@ export WANDB_MODE=offline
 export WANDB_DIR=yourpath/vr-zero/wandb
 export STORAGE_PATH="yourpath/vr-zero/storage"
 
-# MODEL_PATH=yourpath/llm/Qwen2.5-VL-3B-Instruct
-# MODEL_PATH=yourpath/vr-zero/storage/models/Qwen2.5-VL-3B-Instruct_solver_v1/global_step_60/actor/huggingface
-# SAVE_PATH=3B-VL-Qwen2.5-solver_1
-
-
 # DATASETS=(
 #   "yourpath/datasets/mm-vet/test.parquet"
 #   "yourpath/datasets/MLLM_test/test.parquet"
