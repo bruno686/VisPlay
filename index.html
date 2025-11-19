@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VisPlay — Self-Evolving Vision-Language Models</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    background: #0b0b0b;
+    color: #e6e6e6;
+    font-family: "Inter", sans-serif;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 70px 20px 120px 20px;
+    text-align: center;
+}
+
+/* Luxury silver gradient */
+.silver {
+    background: linear-gradient(120deg, #f7f7f7, #c9c9c9, #eaeaea);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Title layout */
+.title-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 15px;
+}
+
+.title-row img {
+    width: 72px;
+    opacity: 0.9;
+}
+
+h1 {
+    font-family: "Playfair Display", serif;
+    font-size: 48px;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* subtitle */
+.subtitle {
+    font-size: 22px;
+    color: #d4d4d4;
+    margin-top: 8px;
+}
+
+/* Authors */
+.authors {
+    margin-top: 18px;
+    font-size: 17px;
+    line-height: 1.7;
+    color: #ccc;
+}
+
+/* GitHub icon */
+.github-icon {
+    margin-top: 12px;
+}
+.github-icon img {
+    width: 34px;
+    opacity: 0.82;
+    transition: 0.3s;
+}
+.github-icon img:hover {
+    opacity: 1;
+    transform: scale(1.07);
+}
+
+/* Images */
+.hero img {
+    width: 75%;
+    margin-top: 50px;
+    border-radius: 18px;
+    box-shadow: 0 0 35px rgba(255,255,255,0.13);
+    transition: 0.5s;
+}
+.hero img:hover {
+    transform: scale(1.015);
+}
+
+/* Section titles */
+.section-title {
+    font-family: "Playfair Display", serif;
+    font-size: 30px;
+    margin-top: 80px;
+    margin-bottom: 20px;
+}
+
+/* Text body */
+.abstract, .content {
+    font-size: 17px;
+    line-height: 1.72;
+    color: #d0d0d0;
+}
+
+/* Method figure */
+.method-figure img {
+    width: 62%;
+    margin-top: 35px;
+    border-radius: 14px;
+}
+
+/* Citation box */
+.cite-box {
+    margin-top: 80px;
+    padding: 28px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    text-align: left;
+    font-family: monospace;
+    white-space: pre-wrap;
+    font-size: 15px;
+}
+.authors {
+    margin-top: 18px;
+    font-size: 17px;
+    line-height: 1.7;
+    color: #ccc;
+}
+
+.affiliation {
+    margin-top: 10px;
+    font-size: 15px;
+    color: #bdbdbd;
+    line-height: 1.6;
+}
+
+.emails {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #aaa;
+}
+
+/* Make text justified */
+.abstract, .content {
+    font-size: 17px;
+    line-height: 1.72;
+    color: #d0d0d0;
+    text-align: justify;
+    text-justify: inter-word;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Title row: icon + title -->
+    <div class="title-row">
+        <img src="assets/title.png" alt="logo">
+        <h1 class="silver">VisPlay</h1>
+    </div>
+
+    <div class="subtitle">
+        Self-Evolving Vision-Language Models
+    </div>
+
+    <!-- Authors -->
+    <div class="authors">
+        Yicheng He<sup>1*</sup> · 
+        Chengsong Huang<sup>2*</sup> · 
+        Zongxia Li<sup>3*</sup> · 
+        Jiaxin Huang<sup>2</sup> · 
+        Yonghui Yang<sup>4</sup>
+    </div>
+
+    <div class="affiliation">
+        <sup>1</sup>University of Illinois Urbana–Champaign &nbsp;&nbsp;
+        <sup>2</sup>Washington University in St. Louis <br>
+        <sup>3</sup>University of Maryland &nbsp;&nbsp;
+        <sup>4</sup>National University of Singapore
+    </div>
+
+    <div class="emails">
+        yh84@uiuc.edu &nbsp;&nbsp; chengsong@wustl.edu &nbsp;&nbsp; zli12321@umd.edu
+        <span style="color:#888; margin-left:14px;"></span>
+        <span style="color:#aaa; margin-left:8px; font-size:13px;">*: Equal Contribution</span>
+    </div>
+
+
+    <!-- GitHub icon -->
+    <div class="github-icon">
+        <a href="https://github.com/bruno686/VisPlay" target="_blank">
+            <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png">
+        </a>
+    </div>
+
+    <!-- Hero image -->
+    <div class="hero">
+        <img src="assets/Visplay.png" alt="Visplay figure">
+    </div>
+
+    <!-- Abstract -->
+    <div class="section-title silver">Abstract</div>
+    <div class="abstract">
+        Reinforcement learning (RL) provides a principled framework for improving
+        vision-language models (VLMs) on complex reasoning tasks. However,
+        existing RL approaches rely heavily on human-annotated labels or
+        task-specific heuristics. We introduce <b>VisPlay</b>, a self-evolving
+        framework that enables VLMs to autonomously improve reasoning from 
+        massive unlabeled image data. A single base model alternates between
+        an Image-Conditioned Questioner and a Multimodal Reasoner—trained via GRPO
+        using difficulty/diversity rewards. VisPlay improves visual reasoning,
+        compositionality, and hallucination robustness across eight benchmarks.
+    </div>
+
+    <!-- Method -->
+    <div class="section-title silver">Method</div>
+    <div class="content">
+    As illustrated in above figure, the framework operates as a closed-loop system involving two agents evolved from the same base model: an <strong style="color:#c8b273;">Image-Conditioned Questioner</strong> and a <strong style="color:#c8b273;">Multimodal Reasoner</strong>. The process begins with the Questioner taking an image as input to generate a visual query. Subsequently, the Reasoner receives both the image and the generated query to produce a response. Both the Questioner and the Reasoner are initialized from a shared pretrained backbone. The two agents co-evolve through iterative interactions: the Questioner is trained to generate more challenging questions, while the Reasoner is trained to solve more and more challenging questions.
+    </div>
+
+    <!-- Method Figure (only once!) -->
+
+    <!-- Citation -->
+    <div class="section-title silver">Cite</div>
+    <div class="cite-box">
+@misc{VisPlay,
+  title={VisPlay: Self-Evolving Vision-Language Models},
+  author={Yicheng He and Chengsong Huang and Zongxia Li and Jiaxin Huang and Yonghui Yang},
+  year={2025},
+  eprint={251118.19652},
+  archivePrefix={arXiv},
+  primaryClass={cs.CV},
+  url={https://arxiv.org/abs/2508.19652}
+}
+    </div>
+
+</div>
+
+</body>
+</html>
