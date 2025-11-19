@@ -1,8 +1,8 @@
 export WANDB_MODE=offline
-export WANDB_DIR=/data/hezhuangzhuang-p/vr-zero/wandb
+export WANDB_DIR=yourpath/vr-zero/wandb
 
-export STORAGE_PATH="/data/hezhuangzhuang-p/vr-zero/storage"
-export HUGGINGFACENAME="bruno888"
+export STORAGE_PATH="yourpath/vr-zero/storage"
+export HUGGINGFACENAME=""
 
 mkdir -p \
   "$STORAGE_PATH/evaluation" \
@@ -11,15 +11,12 @@ mkdir -p \
   "$STORAGE_PATH/temp_results"
 
 
-Base_model=/data/hezhuangzhuang-p/llm/Qwen2.5-VL-3B-Instruct
+Base_model=yourpath/llm/Qwen2.5-VL-3B-Instruct
 Model_abbr=Qwen2.5-VL-3B-Instruct
 echo "Model_abbr: $Model_abbr"
 # Initialize first iteration with base model
-# bash scripts_Qwen-VL-3B/questioner_train.sh  $Base_model $Base_model ${Model_abbr}_questioner_v1
-# bash scripts_Qwen-VL-3B/solver_train.sh $Base_model /data/hezhuangzhuang-p/vr-zero/saves/3b_grpo_vrzero/global_step_40/actor/huggingface ${Model_abbr}_solver_v1
-# bash scripts_Qwen-VL-3B/solver_train.sh $Base_model ${STORAGE_PATH}/models/${Model_abbr}_questioner_v1/global_step_20/actor/huggingface ${Model_abbr}_solver_v1
-
-bash scripts_Qwen-VL-3B/solver_train.sh $Base_model $Base_model ${Model_abbr}_solver_v0
+bash scripts_Qwen-VL-3B/questioner_train.sh  $Base_model $Base_model ${Model_abbr}_questioner_v1
+bash scripts_Qwen-VL-3B/solver_train.sh $Base_model ${STORAGE_PATH}/models/${Model_abbr}_questioner_v1/global_step_20/actor/huggingface ${Model_abbr}_solver_v1
 
 
 for i in {4..5}; do
@@ -46,5 +43,3 @@ for i in {4..5}; do
             ${Model_abbr}_solver_v${i}
     fi
 done
-
-# bash evaluation/eval_math.sh $Base_model

@@ -22,7 +22,7 @@ python3 -m verl.trainer.main \
     config=train_examples/cot_config.yaml \
     data.max_response_length=4096 \
     data.train_files=${STORAGE_PATH}/local_parquet/${experiment_name}_train.parquet \
-    data.val_files=/data/hezhuangzhuang-p/datasets/mmstar/test.parquet \
+    data.val_files=yourpath/datasets/mmstar/test.parquet \
     data.format_prompt=./train_examples/format_prompt/solver.jinja \
     worker.actor.model.model_path=$solver_model_path \
     worker.actor.micro_batch_size_per_device_for_update=1 \
@@ -45,5 +45,3 @@ python scripts_MIMO-VL-7B/model_merger.py --local_dir ${STORAGE_PATH}/models/${e
 sleep 10
 
 echo "solver training finished"
-
-# bash /data/hezhuangzhuang-p/vr-zero/validation_examples/eval_gen_questions.sh $experiment_name ${STORAGE_PATH}/models/${experiment_name}/

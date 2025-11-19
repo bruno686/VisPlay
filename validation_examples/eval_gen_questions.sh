@@ -11,29 +11,29 @@ export PYTHONUNBUFFERED=1
 
 
 export WANDB_MODE=offline
-export WANDB_DIR=/data/hezhuangzhuang-p/vr-zero/wandb
-export STORAGE_PATH="/data/hezhuangzhuang-p/vr-zero/storage"
+export WANDB_DIR=yourpath/vr-zero/wandb
+export STORAGE_PATH="yourpath/vr-zero/storage"
 
-# MODEL_PATH=/data/hezhuangzhuang-p/llm/Qwen2.5-VL-3B-Instruct
-# MODEL_PATH=/data/hezhuangzhuang-p/vr-zero/storage/models/Qwen2.5-VL-3B-Instruct_solver_v1/global_step_60/actor/huggingface
+# MODEL_PATH=yourpath/llm/Qwen2.5-VL-3B-Instruct
+# MODEL_PATH=yourpath/vr-zero/storage/models/Qwen2.5-VL-3B-Instruct_solver_v1/global_step_60/actor/huggingface
 # SAVE_PATH=3B-VL-Qwen2.5-solver_1
 
 
 # DATASETS=(
-#   "/data/hezhuangzhuang-p/datasets/mm-vet/test.parquet"
-#   "/data/hezhuangzhuang-p/datasets/MLLM_test/test.parquet"
-#   "/data/hezhuangzhuang-p/datasets/visnumbench/data/test-00000-of-00001.parquet"
-#   "/data/hezhuangzhuang-p/datasets/mmmu_pro_10options/data/test-00000-of-00001.parquet"
-#   "/data/hezhuangzhuang-p/datasets/mmmu-pro-vision/data/test-00000-of-00001.parquet"
-#   "/data/hezhuangzhuang-p/datasets/hallusionbench/data/test-00000-of-00001.parquet"
-#   "/data/hezhuangzhuang-p/datasets/MMMU/data/test-00000-of-00001.parquet"
+#   "yourpath/datasets/mm-vet/test.parquet"
+#   "yourpath/datasets/MLLM_test/test.parquet"
+#   "yourpath/datasets/visnumbench/data/test-00000-of-00001.parquet"
+#   "yourpath/datasets/mmmu_pro_10options/data/test-00000-of-00001.parquet"
+#   "yourpath/datasets/mmmu-pro-vision/data/test-00000-of-00001.parquet"
+#   "yourpath/datasets/hallusionbench/data/test-00000-of-00001.parquet"
+#   "yourpath/datasets/MMMU/data/test-00000-of-00001.parquet"
 # )
 
 DATASETS=(
-  "/data/hezhuangzhuang-p/datasets/MLLM_test/test.parquet"
-  "/data/hezhuangzhuang-p/datasets/visnumbench/data/test-00000-of-00001.parquet"
-  "/data/hezhuangzhuang-p/datasets/hallusionbench/data/test-00000-of-00001.parquet"
-  "/data/hezhuangzhuang-p/datasets/MMMU/data/test-00000-of-00001.parquet"
+  "yourpath/datasets/MLLM_test/test.parquet"
+  "yourpath/datasets/visnumbench/data/test-00000-of-00001.parquet"
+  "yourpath/datasets/hallusionbench/data/test-00000-of-00001.parquet"
+  "yourpath/datasets/MMMU/data/test-00000-of-00001.parquet"
 )
 
 # ------------------------------------------------------------------
@@ -41,7 +41,7 @@ DATASETS=(
 # ------------------------------------------------------------------
 BASE_CMD="python3 -m verl.trainer.main \
   config=validation_examples/eval_config.yaml \
-  data.train_files=/data/hezhuangzhuang-p/datasets/geometry3k/data/test-00000-of-00001.parquet \
+  data.train_files=yourpath/datasets/geometry3k/data/test-00000-of-00001.parquet \
   data.prompt_key=problem \
   data.answer_key=answer \
   data.image_key=images \
@@ -68,7 +68,7 @@ for DS in "${DATASETS[@]}"; do
   echo ">>> Evaluating on ${DS}"
   CMD="${BASE_CMD} \
     data.val_files=${DS} \
-    trainer.response_path=/data/hezhuangzhuang-p/vr-zero/Evaluation/Raw-Outputs/${experiment_name}/${SHORT_NAME}.jsonl"
+    trainer.response_path=yourpath/vr-zero/Evaluation/Raw-Outputs/${experiment_name}/${SHORT_NAME}.jsonl"
 
   # show the command (optional)
   echo "$CMD" | sed 's/  */ /g'

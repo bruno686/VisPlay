@@ -16,7 +16,7 @@ The code base adopted from [R-Zero](https://github.com/Chengsong-Huang/R-Zero/tr
 - Python 3.9+
 - transformers=4.49.0
 
-### RL Training Setup
+### Self-Evolving Setup
 ```
 git clone https://github.com/bruno686/VisPlay.git
 cd VisPlay
@@ -45,13 +45,18 @@ bash scripts_MIMO-VL-7B/main.sh
 
 
 ### Evaluation & LLM-as-a-Judge Evaluation
-- We use ChatGLM-flash as the Judge. Different LLM judges will result in different evaluation results. For reference, we also comput the rule-based evaluation accuracies, which is lower than LLM-as-Judges on Math datasets.
+We use ChatGLM-flash as the Judge. Different LLM judges will result in different evaluation results. For reference, we also comput the rule-based evaluation accuracies, which is lower than LLM-as-Judges on Math datasets.
 
 1. ##### Generate responses from trained LLM
 We provide all the historic LLM generations for a quick reference and access to the results
 ```
-bash validation_examples/eval_gen_questions.sh
+bash validation_examples/eval_gen_questions.sh $experiment_name $your_model_path
 ```
+For example:
+```
+bash validation_examples/eval_gen_questions.sh MIMO-VL-7B-solver_v3 /your_path/vr-zero/storage/models/MiMo-VL-7B-SFT_solver_v3/global_step_10/actor/huggingface
+```
+
 
 2. ##### Use LLM-as-a-judge to generate result
 ```

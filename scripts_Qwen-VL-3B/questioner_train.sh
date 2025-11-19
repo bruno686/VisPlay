@@ -19,8 +19,8 @@ echo "Start training questioner: $questioner_model_path -> $save_path"
 
 CUDA_VISIBLE_DEVICES=0,1,2,3 python3 -m verl.trainer.main \
     config=train_examples/cot_config.yaml \
-    data.train_files=/data/hezhuangzhuang-p/datasets/Vision-SR1-47K \
-    data.val_files=/data/hezhuangzhuang-p/datasets/mmstar/test.parquet \
+    data.train_files=yourpath/datasets/Vision-SR1-47K \
+    data.val_files=yourpath/datasets/mmstar/test.parquet \
     data.prompt_key=problem \
     data.answer_key=answer \
     data.image_key=images \

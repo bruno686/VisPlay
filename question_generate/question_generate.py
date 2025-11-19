@@ -268,7 +268,7 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", type=str, default="Qwen/Qwen2.5-VL-7B-Instruct", help="Model name or path")
-    parser.add_argument("--data_path", type=str, default="/data/hezhuangzhuang-p/datasets/Vision-SR1-47K", help="Path to VQA dataset")
+    parser.add_argument("--data_path", type=str, default="yourpath/datasets/Vision-SR1-47K", help="Path to VQA dataset")
     parser.add_argument("--num_samples", type=int, default=100, help="Number of samples to process")
     parser.add_argument("--max_samples", type=int, default=None, help="Maximum samples to load from dataset")
     parser.add_argument("--suffix", type=str, default="", help="Suffix to add to the output file")
