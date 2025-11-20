@@ -70,14 +70,14 @@ bash Evaluation/eval.sh
 If you find our works helpful, please cite
 
 ```bibtex
-@misc{VisPlay,
-      title={VisPlay: Self-Evolving Vision-Language Models}, 
-      author={Yicheng He, Chengsong Huang, Zongxia Li, Jiaxin Huang, Yonghui Yang},
+@misc{he2025visplay,
+      title={VisPlay: Self-Evolving Vision-Language Models from Images}, 
+      author={Yicheng He and Chengsong Huang and Zongxia Li and Jiaxin Huang and Yonghui Yang},
       year={2025},
-      eprint={251118.19652},
+      eprint={2511.15661},
       archivePrefix={arXiv},
       primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2508.19652}, 
+      url={https://arxiv.org/abs/2511.15661}, 
 }
 ```
 
