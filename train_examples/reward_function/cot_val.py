@@ -33,41 +33,27 @@ if STORAGE_PATH is None:
     STORAGE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ["NO_PROXY"] = "0.0.0.0,127.0.0.1"
 
-# Ensure temp_results directory exists
 TEMP_RESULTS_DIR = os.path.join(STORAGE_PATH, "temp_results")
 os.makedirs(TEMP_RESULTS_DIR, exist_ok=True)
 
 def encode_image_to_base64(image):
-    """
-    将 PIL Image 对象（或被 np.ndarray 包裹的 PIL Image）转换为 Base64 字符串。
-    """
     if image is None:
         return None
         
-    # --- 修正点 1：处理被 np.ndarray 包裹的情况 ---
     if isinstance(image, np.ndarray) and image.dtype == object and image.size >= 1:
-        # 假设 PIL Image 对象是数组的第一个元素
         img_obj = image.item(0) if image.ndim > 0 else image.item()
     else:
         img_obj = image
         
-    # --- 修正点 2：确认最终对象是 PIL Image ---
-    # 使用类型检查来判断是否是 PIL Image 对象
+
     if 'Image' not in str(type(img_obj)):
-        # 如果不是 PIL Image，则无法处理
         print(f"Warning: Cannot encode unhandled object type: {type(img_obj)}")
         return None
 
     try:
-        # 将图像保存到内存中的 buffer
         buffered = BytesIO()
-        # 建议使用 PNG 格式以保留更高的图像质量，或使用 JPEG 减小文件大小
         img_obj.save(buffered, format="PNG") 
-        
-        # 编码 Base64 并转换为字符串
         base64_data = base64.b64encode(buffered.getvalue()).decode("utf-8")
-        
-        # 加上 Data URI 前缀（强烈建议用于 VLLM/Qwen-VL）
         return f"data:image/png;base64,{base64_data}"
         
     except Exception as e:
@@ -147,7 +133,6 @@ def extract_answer(predict: str) -> Optional[str]:
 
 def accuracy_reward(predict: str, ground_truth: str) -> float:
     answer = extract_boxed_content(predict)
-    # answer = extract_answer(predict)
     return 1.0 if grade_answer(answer, ground_truth) else 0.0
 
 def match(generation):
@@ -173,7 +158,6 @@ def split_list(lst, n=4):
 
 def fetch(index,i):
     response = requests.get(f"http://0.0.0.0:{6000+index}/hello?name={i}")
-    # print(response)
     return True
 
 def generate_results(data):
@@ -193,7 +177,6 @@ def generate_results(data):
     for i in range(4):
         with open(random_names[i].replace('.json','_results.json'),'r') as f:
             final_results.extend(json.load(f))
-        # os.remove(random_names[i].replace('.json','_results.json'))
     for i in range(4):
         os.remove(random_names[i].replace('.json','_results.json'))
     return final_results
@@ -201,28 +184,21 @@ def generate_results(data):
 
 def compute_score(predicts: List[str], ground_truths: List[str], questions: List[str], description_answers: List[str], format_weight: float = 0.1, images: Optional[List[str]] = None) -> List[Dict[str, float]]:
     results = []
-    # image没传过来
     for idx, (predict, ground_truth) in enumerate(zip(predicts, ground_truths)):
         predict = re.sub(r"\s*(<|>|/)\s*", r"\1", predict)  # handle qwen2.5vl-32b format
-        # format_score = format_reward(predict)
-        # accuracy_score = accuracy_reward(predict, ground_truth)
         dirty_results = match(predict)
         if dirty_results == None:
-            item = {"question": "", "answer": "", "types": ""}
+            item = {"question": ""}
         else:
             item = dirty_results
         if images is not None and idx < len(images):
-            # images[idx] 应该是你的图像对象
             encoded_image = encode_image_to_base64(images[idx]) 
             if encoded_image:
-                # 将 image 的值替换为 Base64 字符串
                 item["image"] = encoded_image
             else:
                 item["image"] = None 
         results.append(item)
-    # results在运行下一行前是带有image的[{'question': 'How many countries a... suitcase?', 'answer': '10', 'types': 'numerical', 'image': array([<PIL.Image.Im...pe=object)},
     final_results = generate_results(results)
-    # 运行之后results的image就没了？？[{'question': 'How many countries a... suitcase?', 'answer': '10', 'types': 'numerical',
     penalty = cluster_share_per_problem([result['question'] for result in final_results], distance_threshold=0.5)
     assert len(penalty) == len(final_results)
     scores = []

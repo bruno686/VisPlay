@@ -21,26 +21,6 @@ from typing import Dict, List, Optional
 from mathruler.grader import extract_boxed_content, grade_answer
 
 
-# def format_reward(predict: str) -> float:
-#     pattern = re.compile(r"<think>.*</think>.*\\boxed\{.*\}.*", re.DOTALL)
-#     format_match = re.fullmatch(pattern, predict)
-#     return 1.0 if format_match else 0.0
-
-
-# def format_reward(predict: str) -> float:
-#     # Define a pattern that requires:
-#     #   1) <info>…</info>
-#     #   2) <think>…</think>
-#     #   3) <answer>…</answer>
-#     # with optional whitespace between sections, and dot matching newlines.
-#     pattern = re.compile(
-#         r"^\s*<description>[\s\S]+?</description>\s*"
-#         r"<think>[\s\S]+?</think>\s*"
-#         r"<answer>[\s\S]+?</answer>\s*$",
-#         re.DOTALL
-#     )
-#     return 1.0 if pattern.match(predict) else 0.0
-
 def format_reward(predict: str) -> float:
     pattern = re.compile(
         # r"^\s*<description>.*?</description>\s*"    # the image description block
