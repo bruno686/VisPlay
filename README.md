@@ -65,6 +65,14 @@ bash validation_examples/eval_gen_questions.sh MIMO-VL-7B-solver_v3 /your_path/v
 bash Evaluation/eval.sh
 ```
 
+## Notes
+
+To facilitate your further review of our experiments, I've made our WandB logs publicly available. However, please note that these logs may be incomplete and may not include all iterations. Additionally, the actual number of training steps completed per iteration might not be fully recorded.
+
+**Because, as mentioned in other issues, server limitations forced us to upload manually, so omissions or incorrect curves may exist** (only a few—I haven't cleaned them yet, because you know, sometimes parameters are wrong but get uploaded anyway). **Still, I believe most curves are accurate. I'm providing these for your reference. And we recommend increasing the training iterations as much as possible—for example, to 40 or more—to ensure adequate training. If iteration 1 fails to train effectively, iteration 2 may fall into a local minimum. Thank you again for your attention to our work!**
+
+[visplay_wandb_log_public](https://wandb.ai/bruno686/Visplay/table?nw=nwuserbruno686)
+
 ## Citation
 
 If you find our works helpful, please cite
