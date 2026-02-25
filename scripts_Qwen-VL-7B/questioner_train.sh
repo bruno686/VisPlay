@@ -27,7 +27,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 -m verl.trainer.main \
     worker.actor.model.model_path=$questioner_model_path \
     worker.rollout.max_model_len=8192 \
     worker.rollout.n=8 \
-    trainer.max_steps=10  \
+    trainer.max_steps=20  \
     trainer.save_freq=10 \
     trainer.experiment_name=$save_path \
     trainer.save_checkpoint_path=${STORAGE_PATH}/models/$save_path \
@@ -39,7 +39,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 -m verl.trainer.main \
 sleep 5
 
 echo "merging model"
-python scripts_Qwen-VL-7B/model_merger.py --local_dir ${STORAGE_PATH}/models/$save_path/global_step_10/actor
+python scripts_Qwen-VL-7B/model_merger.py --local_dir ${STORAGE_PATH}/models/$save_path/global_step_20/actor
 
 sleep 10
 

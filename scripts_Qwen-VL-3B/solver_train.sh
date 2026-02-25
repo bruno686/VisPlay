@@ -30,14 +30,14 @@ python3 -m verl.trainer.main \
     worker.reward.reward_function=./train_examples/reward_function/cot_val_solver.py:compute_score \
     worker.val_reward.reward_function=./train_examples/reward_function/cot_val_solver.py:compute_score \
     trainer.total_epochs=10 \
-    trainer.max_steps=20 \
+    trainer.max_steps=40 \
     trainer.experiment_name=${experiment_name} \
     trainer.save_checkpoint_path=${STORAGE_PATH}/models/${experiment_name}/ 
 
 sleep 5
 
 echo "merging model"
-python scripts_Qwen-VL-3B/model_merger.py --local_dir ${STORAGE_PATH}/models/${experiment_name}/global_step_20/actor
+python scripts_Qwen-VL-3B/model_merger.py --local_dir ${STORAGE_PATH}/models/${experiment_name}/global_step_40/actor
 
 sleep 10
 

@@ -49,6 +49,9 @@ bash scripts_MIMO-VL-7B/main.sh
 ### Evaluation & LLM-as-a-Judge Evaluation
 We use ChatGLM-flash as the Judge. Different LLM judges will result in different evaluation results. For reference, we also comput the rule-based evaluation accuracies, which is lower than LLM-as-Judges on Math datasets.
 
+0. ##### Prepare Benchmark
+All we benchmark are from [zli12321/datasets](https://huggingface.co/zli12321/datasets), you can directly download them. Ensuring consistency in evaluation is crucial.
+
 1. ##### Generate responses from trained LLM
 We provide all the historic LLM generations for a quick reference and access to the results
 ```
@@ -56,7 +59,7 @@ bash validation_examples/eval_gen_questions.sh $experiment_name $your_model_path
 ```
 For example:
 ```
-bash validation_examples/eval_gen_questions.sh MIMO-VL-7B-solver_v3 /your_path/vr-zero/storage/models/MiMo-VL-7B-SFT_solver_v3/global_step_10/actor/huggingface
+bash validation_examples/eval_gen_questions.sh MIMO-VL-7B-solver_v3 /your_path/vr-zero/storage/models/MiMo-VL-7B-SFT_solver_v3/global_step_20/actor/huggingface
 ```
 
 
@@ -72,6 +75,8 @@ To facilitate your further review of our experiments, I've made our WandB logs p
 **Because, as mentioned in other issues, server limitations forced us to upload manually, so omissions or incorrect curves may exist** (only a few—I haven't cleaned them yet, because you know, sometimes parameters are wrong but get uploaded anyway). **Still, I believe most curves are accurate. I'm providing these for your reference. And we recommend increasing the training iterations as much as possible—for example, to 40 or more—to ensure adequate training. If iteration 1 fails to train effectively, iteration 2 may fall into a local minimum. Thank you again for your attention to our work!**
 
 [visplay_wandb_log_public](https://wandb.ai/bruno686/Visplay/table?nw=nwuserbruno686)
+
+To fully reproduce our results, the same benchmark should be used.
 
 ## Citation
 
